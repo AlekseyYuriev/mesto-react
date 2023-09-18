@@ -8,8 +8,7 @@ function ImagePopup({card, onClose}) {
                type="button" 
                aria-label="закрыть" 
                className="popup__close-button popup__close-button_type_bigcard"
-               onClick={onClose}>
-            </button>
+               onClick={onClose} />
             <img src={card ? card.link : ''} alt={card ? card.name : ''} className="popup__image" />
             <h4 className="popup__card-name">{card ? card.name : ''}</h4>
          </div>

@@ -10,8 +10,7 @@ function PopupWithForm({name, title, buttonText, isOpen, children, onClose}) {
                type="button" 
                aria-label="закрыть" 
                className="popup__close-button popup__close-button_type_profile" 
-               onClick={onClose}>
-            </button>
+               onClick={onClose} />
             <h3 className="popup__title">{title}</h3>
             <form name={name} className="popup__form popup__form_type_delete">
                {children}

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import Header from './header/header';
-import Main from './main/main';
-import Footer from './footer/footer';
-import ImagePopup from './imagePopup/ImagePopup';
-import PopupWithForm from './popupWithForm/PopupWithForm';
+import Header from '../components/Header';
+import Main from '../components/Main';
+import Footer from '../components/Footer';
+import ImagePopup from '../components/ImagePopup';
+import PopupWithForm from '../components/PopupWithForm';
 import api from '../utils/Api';
-import Card from './card/card';
+import Card from '../components/Card';
 
 function App() {
 
@@ -86,11 +86,11 @@ function App() {
         onClose={closeAllPopups}>
           <label className="popup__field">
             <input id="name-input" name="name" type="text" placeholder="Имя" className="popup__input popup__input_type_name" required minLength="2" maxLength="40" />
-            <span className="name-input-error popup__input-error"></span>
+            <span className="name-input-error popup__input-error" />
           </label>
           <label className="popup__field">
             <input id="about-input" name="about" type="text" placeholder="О себе" className="popup__input popup__input_type_description" required minLength="2" maxLength="200" />
-            <span className="about-input-error popup__input-error"></span>
+            <span className="about-input-error popup__input-error" />
           </label>
         </PopupWithForm>
         <PopupWithForm
@@ -101,11 +101,11 @@ function App() {
         onClose={closeAllPopups}>
           <label className="popup__field">
             <input id="card-name-input" name="name" type="text" className="popup__input popup__input_type_card-name" placeholder="Название" required minLength="2" maxLength="30" />
-            <span className="card-name-input-error popup__input-error"></span>
+            <span className="card-name-input-error popup__input-error" />
           </label>
           <label className="popup__field">
             <input id="link-input" name="link" type="url" className="popup__input popup__input_type_link" placeholder="Ссылка на картинку" required />
-            <span className="link-input-error popup__input-error"></span>
+            <span className="link-input-error popup__input-error" />
           </label>
         </PopupWithForm>
         <PopupWithForm
@@ -121,7 +121,7 @@ function App() {
         onClose={closeAllPopups}>
           <label className="popup__field">
             <input id="link-avatar" name="link" type="url" className="popup__input popup__input_type_link" placeholder="Ссылка на картинку аватара" required />
-            <span className="link-avatar-error popup__input-error"></span>
+            <span className="link-avatar-error popup__input-error" />
           </label>
         </PopupWithForm>
       </div>
