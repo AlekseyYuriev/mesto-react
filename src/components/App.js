@@ -6,6 +6,7 @@ import ImagePopup from '../components/ImagePopup';
 import PopupWithForm from '../components/PopupWithForm';
 import api from '../utils/Api';
 import Card from '../components/Card';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function App() {
 
@@ -44,6 +45,27 @@ function App() {
     setSelectedCard(card);
   }
 
+  function handleCardLike(card) {
+    // Снова проверяем, есть ли уже лайк на этой карточке
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    
+    // Проверяем, ставили ли мы лайк на карточку, отправляем запрос в API и получаем обновлённые данные карточки
+    if(isLiked) {
+      api.deleteLike(card._id).then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+    })} else {
+      api.setLike(card._id).then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+    })
+  }
+}
+
+function handleCardDelete(card) {
+  api.deleteCard(card._id).then(() => {
+    setCards((state) => state.filter((c) => c._id !== card._id))
+  })
+}
+
   useEffect(() => {
     api.getUserData().then((currentUser) => {
       setcurrentUser(currentUser);
@@ -58,6 +80,7 @@ function App() {
 
 
   return (
+    <CurrentUserContext.Provider value={currentUser}>
       <div className='page'>
         <Header />
         <Main
@@ -71,7 +94,9 @@ function App() {
               <Card
                 key={item._id}
                 card={item}
-                onCardClick={handleCardClick} />
+                onCardClick={handleCardClick}
+                onCardLike={handleCardLike}
+                onCardDelete={handleCardDelete} />
             ))}
           </Main>
         <Footer />
@@ -125,6 +150,7 @@ function App() {
           </label>
         </PopupWithForm>
       </div>
+    </CurrentUserContext.Provider>
   );
 }
 

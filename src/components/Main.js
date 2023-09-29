@@ -1,14 +1,17 @@
 import React from "react";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function Main ({onEditProfile, onAddPlace, onEditAvatar, userName, userDescription, userAvatar, children}) {
+function Main ({onEditProfile, onAddPlace, onEditAvatar, children}) {
+
+   const currentUser = React.useContext(CurrentUserContext);
 
    return (
       <main>
          <section className="profile">
             <div className="profile__content">
                <img 
-               src={userAvatar} 
-               alt={userName} 
+               src={currentUser.avatar} 
+               alt={currentUser.name} 
                className="profile__avatar" />
                <button 
                   type="button" 
@@ -16,10 +19,10 @@ function Main ({onEditProfile, onAddPlace, onEditAvatar, userName, userDescripti
                   onClick={onEditAvatar} />
                <div className="profile__info">
                   <div className="profile__wrapper">
-                     <h1 className="profile__name">{userName}</h1>
+                     <h1 className="profile__name">{currentUser.name}</h1>
                      <button type="button" aria-label="редактировать профиль" className="profile__edit-button link" onClick={onEditProfile} />
                   </div>
-                  <p className="profile__description">{userDescription}</p>
+                  <p className="profile__description">{currentUser.about}</p>
                </div>
             </div>
             <button type="button" aria-label="добавить карточку" className="profile__add-button link" onClick={onAddPlace} />
