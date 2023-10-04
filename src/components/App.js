@@ -3,19 +3,24 @@ import Header from '../components/Header';
 import Main from '../components/Main';
 import Footer from '../components/Footer';
 import ImagePopup from '../components/ImagePopup';
-import PopupWithForm from '../components/PopupWithForm';
 import api from '../utils/Api';
 import Card from '../components/Card';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditProfilePopup from '../components/EditProfilePopup';
 import EditAvatarPopup from '../components/EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup ';
+import ConfirmationPopup from './ConfirmationPopup';
 
 function App() {
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState({
+    isOpen: false,
+    card: {}
+  });
+
   const [currentUser, setcurrentUser] = useState({
     "name": 'Жак-Ив Кусто',
     "about": 'Исследователь океана',
@@ -37,10 +42,18 @@ function App() {
     setIsEditAvatarPopupOpen(true);
   }
 
+  function handleDeleteClick(card) {
+    setIsConfirmationPopupOpen({
+      isOpen: true,
+      card: card
+    });
+  }
+
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);  
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
+    setIsConfirmationPopupOpen(false);
     setSelectedCard(null);
   }
 
@@ -66,6 +79,7 @@ function App() {
 function handleCardDelete(card) {
   api.deleteCard(card._id).then(() => {
     setCards((state) => state.filter((c) => c._id !== card._id))
+    closeAllPopups();
   })
 }
 
@@ -119,7 +133,8 @@ function handleCardDelete(card) {
                 card={item}
                 onCardClick={handleCardClick}
                 onCardLike={handleCardLike}
-                onCardDelete={handleCardDelete} />
+                onDeleteClick={handleDeleteClick}
+              />
             ))}
           </Main>
         <Footer />
@@ -137,12 +152,12 @@ function handleCardDelete(card) {
           onClose={closeAllPopups} 
           onAddPlace={handleAddPlaceSubmit}
         />
-        <PopupWithForm
-          name={"confirm"}
-          title={"Вы уверены?"}
-          buttonText={"Да"}
-        >
-        </PopupWithForm>
+        <ConfirmationPopup 
+          isOpen={isConfirmationPopupOpen.isOpen}
+          card={isConfirmationPopupOpen.card} 
+          onClose={closeAllPopups} 
+          onCardDelete={handleCardDelete}
+        />
         <EditAvatarPopup 
           isOpen={isEditAvatarPopupOpen} 
           onClose={closeAllPopups} 

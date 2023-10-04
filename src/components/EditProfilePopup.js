@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PopupWithForm from "../components/PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
@@ -6,20 +6,60 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
 
    const currentUser = React.useContext(CurrentUserContext);
 
-   const [name, setName] = React.useState('');
-   const [description, setDescription] = React.useState('');
+   const [name, setName] = useState('');
+   const [description, setDescription] = useState('');
+   const [nameDirty, setNameDirty] = useState(false);
+   const [descriptionDirty, setDescriptionDirty] = useState(false);
+   const [nameError, setNameError] = useState('Укажите имя пользователя');
+   const [descriptionError, setDescriptionError] = useState('Укажите описание пользователя');
+   const [formValid, setFormValid] = useState(false);
 
-   React.useEffect(() => {
+   const blurHandler = (e) => {
+      switch (e.target.name) {
+         case 'name':
+            setNameDirty(true)
+            break
+         case 'about':
+            setDescriptionDirty(true)
+            break
+      }
+   }
+
+   useEffect(() => {
       setName(currentUser.name);
       setDescription(currentUser.about);
    }, [currentUser]);
 
-   function handleNameChange(e) {
+   useEffect(() => {
+      if(nameError || descriptionError) {
+         setFormValid(false)
+      } else {
+         setFormValid(true)
+      }
+   }, [nameError, descriptionError])
+
+   const handleNameChange = (e) => {
       setName(e.target.value);
+      if(e.target.value.length < 2 || e.target.value.length > 40) {
+         setNameError('Название места должно быть длиннее 2 и короче 40 символов')
+         if(!e.target.value) {
+            setNameError('Укажите имя пользователя')
+         }
+      } else {
+         setNameError('')
+      }
    }
 
-   function handleDescriptionChange(e) {
+   const handleDescriptionChange = (e) => {
       setDescription(e.target.value);
+      if(e.target.value.length < 2 || e.target.value.length > 200) {
+         setDescriptionError('Название места должно быть длиннее 2 и короче 200 символов')
+         if(!e.target.value) {
+            setDescriptionError('Укажите описание пользователя')
+         }
+      } else {
+         setDescriptionError('')
+      }
    }
 
    function handleSubmit(e) {
@@ -39,7 +79,9 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
       buttonText={"Сохранить"}
       isOpen={isOpen}
       onClose={onClose}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+      isFormInvalid={formValid}
+      >
          <label className="popup__field">
             <input 
             id="name-input" 
@@ -47,12 +89,13 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
             type="text" 
             placeholder="Имя" 
             className="popup__input popup__input_type_name" 
-            required 
-            minLength="2" 
-            maxLength="40"
             value={name}
-            onChange={handleNameChange} />
-            <span className="name-input-error popup__input-error" />
+            onBlur={e => blurHandler(e)}
+            onChange={e => handleNameChange(e)} />
+            <div className="name-input-error popup__input-error">
+               {(nameDirty && nameError) && <span>{nameError}</span>}
+            </div>
+            
          </label>
          <label className="popup__field">
             <input 
@@ -61,12 +104,12 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
             type="text" 
             placeholder="О себе" 
             className="popup__input popup__input_type_description" 
-            required 
-            minLength="2" 
-            maxLength="200"
             value={description}
-            onChange={handleDescriptionChange} />
-            <span className="about-input-error popup__input-error" />
+            onBlur={e => blurHandler(e)}
+            onChange={e => handleDescriptionChange(e)} />
+            <div className="name-input-error popup__input-error">
+               {(descriptionDirty && descriptionError) && <span>{descriptionError}</span>}
+            </div>
          </label>
       </PopupWithForm>
    )

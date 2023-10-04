@@ -1,16 +1,35 @@
-import React from "react";
 import { useRef } from 'react';
 import PopupWithForm from "../components/PopupWithForm";
+import { useForm } from "react-hook-form";
 
 function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar}) {
 
    const avatarInfo = useRef();
 
-   function handleSubmit(e) {
-      e.preventDefault();
+   const {
+      register, 
+      handleSubmit, 
+      formState: { errors, isValid }, 
+      reset,
+   } = useForm({mode: 'onBlur'});
+
+   const textRegister = register('link', {
+      required: {
+         value: true,
+         message: "Поле обязательно для заполнения",
+      },
+      pattern: {
+         value: /^(https:|http:|www\.)\S*/gm,
+         message: "Введите URL",
+      },
+   })
+
+   const onSubmit = (data) => {
+
       onUpdateAvatar({
-         link: avatarInfo.current.value
+         link: data.link
       });
+      reset();
    } 
 
    return(
@@ -20,19 +39,20 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar}) {
          buttonText={"Сохранить"}
          isOpen={isOpen}
          onClose={onClose}
-         onSubmit={handleSubmit}
+         onSubmit={handleSubmit(onSubmit)}
+         isFormInvalid={isValid}
       >
          <label className="popup__field">
             <input 
                ref={avatarInfo} 
                id="link-avatar" 
-               name="link" 
-               type="url" 
                className="popup__input popup__input_type_link" 
                placeholder="Ссылка на картинку аватара" 
-               required
+               {...textRegister}
             />
-            <span className="link-avatar-error popup__input-error" />
+            <div className="name-input-error popup__input-error">
+               {errors.link && <span>{errors.link.message}</span>}
+            </div>
          </label>
       </PopupWithForm>
    )
