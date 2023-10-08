@@ -13,4 +13,4 @@
 
 **Познакомиться с проектом можно по ссылке:**
 
-* [Mesto](https://alekseyyuriev.github.io/mesto-react/)
+* [Mesto-react](https://alekseyyuriev.github.io/mesto-react/)
