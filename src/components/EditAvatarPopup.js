@@ -1,8 +1,15 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import PopupWithForm from "../components/PopupWithForm";
 import { useForm } from "react-hook-form";
 
-function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar}) {
+function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, buttonState}) {
+
+   useEffect(() => {
+      if(!isOpen) {
+         errors.link = '';
+         reset();
+      }
+   }, [isOpen]);
 
    const avatarInfo = useRef();
 
@@ -29,18 +36,17 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar}) {
       onUpdateAvatar({
          link: data.link
       });
-      reset();
    } 
 
    return(
       <PopupWithForm
          name={"avatar"}
          title={"Обновить аватар"}
-         buttonText={"Сохранить"}
          isOpen={isOpen}
          onClose={onClose}
          onSubmit={handleSubmit(onSubmit)}
          isFormInvalid={isValid}
+         buttonText={buttonState}
       >
          <label className="popup__field">
             <input 

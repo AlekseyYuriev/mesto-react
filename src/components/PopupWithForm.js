@@ -1,10 +1,12 @@
 import React from "react";
 
-function PopupWithForm({ name, title, buttonText, isOpen, children, onClose, onSubmit, isFormInvalid }) {
+function PopupWithForm({ name, title, isOpen, children, onClose, onSubmit, isFormInvalid, buttonText }) {
 
    return (
-      <aside className={isOpen ? `popup popup_type_${name} popup_opend` : `popup popup_type_${name}`}>
-         <div className="popup__container">
+      <aside 
+         className={isOpen ? `popup popup_type_${name} popup_opend` : `popup popup_type_${name}`} 
+         onClick={onClose}>
+         <div className="popup__container" onClick={(e => e.stopPropagation())}>
             <button 
                type="button" 
                aria-label="закрыть" 

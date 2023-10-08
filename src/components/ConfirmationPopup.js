@@ -1,7 +1,7 @@
 import React from "react";
 import PopupWithForm from "../components/PopupWithForm";
 
-function ConfirmationPopup ({ isOpen, onClose, onCardDelete, card }) {
+function ConfirmationPopup ({ isOpen, onClose, onCardDelete, card, buttonState }) {
 
    const handleSubmit = (e) => {
       e.preventDefault();
@@ -16,9 +16,9 @@ function ConfirmationPopup ({ isOpen, onClose, onCardDelete, card }) {
          onClose={onClose}
          name={"confirm"}
          title={"Вы уверены?"}
-         buttonText={"Да"}
          onSubmit={handleSubmit}
          isFormInvalid={isValid}
+         buttonText={buttonState}
       />
    )
 }

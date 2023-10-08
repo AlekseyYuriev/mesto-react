@@ -20,11 +20,12 @@ function App() {
     isOpen: false,
     card: {}
   });
+  const [submitButtonState, setSubmitButtonState] = useState('');
 
   const [currentUser, setcurrentUser] = useState({
     "name": 'Жак-Ив Кусто',
     "about": 'Исследователь океана',
-    "avatar": 'url(../../images/avatar.png)'
+    "avatar": '../images/avatar.png'
   });
 
   const [cards, setCards] = useState([]);
@@ -32,14 +33,17 @@ function App() {
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
+    setSubmitButtonState('Сохранить');
   }
 
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
+    setSubmitButtonState('Сохранить');
   }
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
+    setSubmitButtonState('Сохранить');
   }
 
   function handleDeleteClick(card) {
@@ -47,6 +51,7 @@ function App() {
       isOpen: true,
       card: card
     });
+    setSubmitButtonState('Да');
   }
 
   function closeAllPopups() {
@@ -56,6 +61,20 @@ function App() {
     setIsConfirmationPopupOpen(false);
     setSelectedCard(null);
   }
+
+  function closeByEsc(evt) {
+    if (evt.key === "Escape") {
+      closeAllPopups();
+    }
+  }
+
+  useEffect(()=>{
+    if(isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || isConfirmationPopupOpen.isOpen || selectedCard){
+      document.addEventListener('keydown', closeByEsc);
+    }else{
+      document.removeEventListener('keydown', closeByEsc);
+    }    
+  },[isEditAvatarPopupOpen, isEditProfilePopupOpen, isAddPlacePopupOpen, isConfirmationPopupOpen.isOpen, selectedCard, closeByEsc]);
 
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -67,53 +86,102 @@ function App() {
     
     // Проверяем, ставили ли мы лайк на карточку, отправляем запрос в API и получаем обновлённые данные карточки
     if(isLiked) {
-      api.deleteLike(card._id).then((newCard) => {
-        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-    })} else {
-      api.setLike(card._id).then((newCard) => {
-        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-    })
+      api.deleteLike(card._id)
+        .then((newCard) => {
+          setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    } else {
+      api.setLike(card._id)
+        .then((newCard) => {
+          setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 }
 
 function handleCardDelete(card) {
-  api.deleteCard(card._id).then(() => {
-    setCards((state) => state.filter((c) => c._id !== card._id))
-    closeAllPopups();
-  })
+  setSubmitButtonState('Удаление...');
+  api.deleteCard(card._id)
+    .then(() => {
+      setCards((state) => state.filter((c) => c._id !== card._id))
+      closeAllPopups();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      setSubmitButtonState('Да');
+    })
 }
 
   useEffect(() => {
-    api.getUserData().then((currentUser) => {
-      setcurrentUser(currentUser);
-    })
+    api.getUserData()
+      .then((currentUser) => {
+        setcurrentUser(currentUser);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }, []);
 
   useEffect(() => {
-    api.getInitialCards().then((res) => {
-      setCards(res);
-    })
+    api.getInitialCards()
+      .then((res) => {
+        setCards(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }, []);
 
   const handleUpdateUser = (userInfo) => {
-    api.setUserData(userInfo).then((newUserInfo) => {
-      setcurrentUser(newUserInfo);
-      closeAllPopups();
-    })
+    setSubmitButtonState('Сохранение...');
+    api.setUserData(userInfo)
+      .then((newUserInfo) => {
+        setcurrentUser(newUserInfo);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setSubmitButtonState('Сохранить');
+      })
   }
 
   const handleUpdateAvatar = (avatarLink) => {
-    api.updateAvatar(avatarLink).then((newAvatar) => {
-      setcurrentUser(newAvatar);
-      closeAllPopups();
-    })
+    setSubmitButtonState('Сохранение...');
+    api.updateAvatar(avatarLink)
+      .then((newAvatar) => {
+        setcurrentUser(newAvatar);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setSubmitButtonState('Сохранить');
+      })
   }
   
   const handleAddPlaceSubmit = (cardInfo) => {
-    api.createNewCard(cardInfo).then((newCard) => {
-      setCards([newCard, ...cards])
-      closeAllPopups();
-    })  
+    setSubmitButtonState('Добавление карточки...');
+    api.createNewCard(cardInfo)
+      .then((newCard) => {
+        setCards([newCard, ...cards])
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setSubmitButtonState('Сохранить');
+      })
   }
 
   return (
@@ -146,22 +214,26 @@ function handleCardDelete(card) {
           isOpen={isEditProfilePopupOpen} 
           onClose={closeAllPopups} 
           onUpdateUser={handleUpdateUser}
+          buttonState={submitButtonState} 
         /> 
         <AddPlacePopup
           isOpen={isAddPlacePopupOpen}
           onClose={closeAllPopups} 
           onAddPlace={handleAddPlaceSubmit}
+          buttonState={submitButtonState} 
         />
         <ConfirmationPopup 
           isOpen={isConfirmationPopupOpen.isOpen}
           card={isConfirmationPopupOpen.card} 
           onClose={closeAllPopups} 
           onCardDelete={handleCardDelete}
+          buttonState={submitButtonState}
         />
         <EditAvatarPopup 
           isOpen={isEditAvatarPopupOpen} 
           onClose={closeAllPopups} 
           onUpdateAvatar={handleUpdateAvatar}
+          buttonState={submitButtonState} 
         />
       </div>
     </CurrentUserContext.Provider>

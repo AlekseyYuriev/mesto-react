@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PopupWithForm from "../components/PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
+function EditProfilePopup({ isOpen, onClose, onUpdateUser, buttonState }) {
 
    const currentUser = React.useContext(CurrentUserContext);
 
@@ -12,7 +12,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
    const [descriptionDirty, setDescriptionDirty] = useState(false);
    const [nameError, setNameError] = useState('Укажите имя пользователя');
    const [descriptionError, setDescriptionError] = useState('Укажите описание пользователя');
-   const [formValid, setFormValid] = useState(false);
+   const [formValid, setFormValid] = useState(true);
 
    const blurHandler = (e) => {
       switch (e.target.name) {
@@ -26,9 +26,17 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
    }
 
    useEffect(() => {
-      setName(currentUser.name);
-      setDescription(currentUser.about);
-   }, [currentUser]);
+      if(isOpen) {
+         setName(currentUser.name);
+         setDescription(currentUser.about);
+
+      } else {
+         setName('');
+         setDescription('');
+         setNameError('');
+         setDescriptionError('');
+      }
+   }, [currentUser, isOpen]);
 
    useEffect(() => {
       if(nameError || descriptionError) {
@@ -41,7 +49,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
    const handleNameChange = (e) => {
       setName(e.target.value);
       if(e.target.value.length < 2 || e.target.value.length > 40) {
-         setNameError('Название места должно быть длиннее 2 и короче 40 символов')
+         setNameError('Имя пользователя должно быть длиннее 2 и короче 40 символов')
          if(!e.target.value) {
             setNameError('Укажите имя пользователя')
          }
@@ -53,9 +61,9 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
    const handleDescriptionChange = (e) => {
       setDescription(e.target.value);
       if(e.target.value.length < 2 || e.target.value.length > 200) {
-         setDescriptionError('Название места должно быть длиннее 2 и короче 200 символов')
+         setDescriptionError('Описание профиля должно быть длиннее 2 и короче 200 символов')
          if(!e.target.value) {
-            setDescriptionError('Укажите описание пользователя')
+            setDescriptionError('Укажите описание профиля')
          }
       } else {
          setDescriptionError('')
@@ -76,11 +84,11 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
       <PopupWithForm
       name={"edit"}
       title={"Редактировать профиль"}
-      buttonText={"Сохранить"}
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
       isFormInvalid={formValid}
+      buttonText={buttonState}
       >
          <label className="popup__field">
             <input 

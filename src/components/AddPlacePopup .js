@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PopupWithForm from "../components/PopupWithForm";
 
-function AddPlacePopup({ isOpen, onClose, onAddPlace}) {
+function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonState }) {
 
    const [name, setName] = useState('');
    const [link, setLink] = useState('');
@@ -18,6 +18,18 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace}) {
          setFormValid(true)
       }
    }, [nameError, linkError])
+
+   useEffect(() => {
+      if(isOpen && (name.length <= 0 || link.length <= 0)) {
+         setFormValid(false);
+      } else if(!isOpen) {
+         setFormValid(false);
+         setName('');
+         setLink('');
+         setNameError('');
+         setLinkError('');
+      }
+   }, [isOpen, formValid])
 
    const blurHandler = (e) => {
       switch (e.target.name) {
@@ -57,19 +69,17 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace}) {
          name,
          link
       })
-      setName('');
-      setLink('');
    }
 
    return(
       <PopupWithForm
          name={"add"}
          title={"Новое место"}
-         buttonText={"Сохранить"}
          isOpen={isOpen}
          onClose={onClose}
          onSubmit={handleSubmit}
          isFormInvalid={formValid}
+         buttonText={buttonState}
       >
          <label className="popup__field">
             <input 

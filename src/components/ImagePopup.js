@@ -2,8 +2,12 @@ import React from "react";
 
 function ImagePopup({card, onClose}) {
    return (
-      <aside className={`popup popup_dark popup_type_bigcard ${card ? 'popup_opend' : ''}`}>
-         <div className="popup__card">
+      <aside 
+         className={`popup popup_dark popup_type_bigcard ${card ? 'popup_opend' : ''}`}
+         onClick={onClose}>
+         <div 
+            className="popup__card"
+            onClick={(e => e.stopPropagation())}>
             <button 
                type="button" 
                aria-label="закрыть" 
