@@ -8,6 +8,8 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, buttonState}) {
       if(!isOpen) {
          errors.link = '';
          reset();
+      } else {
+         reset();
       }
    }, [isOpen]);
 

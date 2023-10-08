@@ -10,6 +10,7 @@ import EditProfilePopup from '../components/EditProfilePopup';
 import EditAvatarPopup from '../components/EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup ';
 import ConfirmationPopup from './ConfirmationPopup';
+import avatar from '../images/avatar.png';
 
 function App() {
 
@@ -25,7 +26,7 @@ function App() {
   const [currentUser, setcurrentUser] = useState({
     "name": 'Жак-Ив Кусто',
     "about": 'Исследователь океана',
-    "avatar": '../images/avatar.png'
+    "avatar": avatar
   });
 
   const [cards, setCards] = useState([]);
